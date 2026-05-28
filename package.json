@@ -1,0 +1,24 @@
+{
+  "name": "learning-pills",
+  "version": "1.0.0",
+  "description": "Learning project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thais-blumenthal/Learning-pills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/thais-blumenthal/Learning-pills/issues"
+  },
+  "homepage": "https://github.com/thais-blumenthal/Learning-pills#readme",
+  "devDependencies": {
+    "tsx": "^4.22.3"
+  }
+}
