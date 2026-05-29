@@ -353,3 +353,31 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .research-orb { animation: none; }
 }
+
+/* learning plan concept list (Slice 3) */
+.concept-list { list-style: none; margin: 0; padding: 0; }
+.concept-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-solid);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.concept-num {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--grad);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.concept-title { font-family: var(--font-fredoka), sans-serif; font-weight: 600; margin: 0; }
+.concept-hook { color: var(--text-dim); font-size: 13.5px; margin: 2px 0 0; }
+.concept-minutes { margin-left: auto; color: var(--text-dim); font-size: 13px; flex: none; }
