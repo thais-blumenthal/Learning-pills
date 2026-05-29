@@ -101,11 +101,61 @@ body {
 }
 
 .project-card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border-solid);
   box-shadow: 0 10px 30px -18px rgba(214, 36, 159, 0.4);
 }
 .project-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+/* the navigable area of a project card (sibling to the delete button) */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* corner delete control on a project card */
+.card-delete {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 999px;
+  background: var(--track);
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.card-delete:hover { background: #d8553f; color: #fff; }
+.card-delete:disabled { opacity: 0.5; cursor: default; }
+
+/* outlined destructive button (project detail page) */
+.btn-danger {
+  border: 1px solid #d8553f;
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #d8553f;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #d8553f; color: #fff; }
+.btn-danger:disabled { opacity: 0.5; cursor: default; }
+
+.detail-danger {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-solid);
+}
 
 .new-card {
   border: 2px dashed var(--border-solid);

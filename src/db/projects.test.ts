@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { projects, sources } from "./schema";
-import { createProject, getProject, listProjects } from "./projects";
+import { createProject, deleteProject, getProject, listProjects } from "./projects";
 
 const createdIds: number[] = [];
 
@@ -48,4 +48,22 @@ test("createProject rejects an empty name", async () => {
   await expect(
     createProject({ name: "   ", urls: [], cadence: "morning" }),
   ).rejects.toThrow(/name/i);
+});
+
+test("deleteProject removes the project and its sources", async () => {
+  const project = await createProject({
+    name: "To Delete",
+    urls: ["https://x.com", "https://y.com"],
+    cadence: "morning",
+  });
+  createdIds.push(project.id); // safety net; re-deleting in afterEach is a no-op
+
+  await deleteProject(project.id);
+
+  expect(await getProject(project.id)).toBeNull();
+  const remainingSources = await db
+    .select()
+    .from(sources)
+    .where(eq(sources.projectId, project.id));
+  expect(remainingSources).toEqual([]);
 });

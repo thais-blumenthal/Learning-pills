@@ -35,6 +35,11 @@ export async function listProjects() {
   return db.select().from(projects).orderBy(desc(projects.createdAt));
 }
 
+export async function deleteProject(id: number) {
+  await db.delete(sources).where(eq(sources.projectId, id));
+  await db.delete(projects).where(eq(projects.id, id));
+}
+
 export async function getProject(id: number) {
   const [project] = await db.select().from(projects).where(eq(projects.id, id));
   if (!project) return null;

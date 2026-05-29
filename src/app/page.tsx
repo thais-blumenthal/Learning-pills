@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listProjects } from "@/db/projects";
+import { DeleteProjectButton } from "./projects/DeleteProjectButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,11 +27,18 @@ export default async function HomePage() {
         </Link>
 
         {projects.map((project) => (
-          <Link key={project.id} href={`/projects/${project.id}`} className="card project-card">
-            <h2 className="project-name">{project.name}</h2>
-            {project.goal && <p className="project-goal">{project.goal}</p>}
-            <span className="cadence">↗ {CADENCE_LABEL[project.cadence] ?? project.cadence}</span>
-          </Link>
+          <div key={project.id} className="card project-card">
+            <Link href={`/projects/${project.id}`} className="card-body">
+              <h2 className="project-name">{project.name}</h2>
+              {project.goal && <p className="project-goal">{project.goal}</p>}
+              <span className="cadence">↗ {CADENCE_LABEL[project.cadence] ?? project.cadence}</span>
+            </Link>
+            <DeleteProjectButton
+              projectId={project.id}
+              projectName={project.name}
+              variant="icon"
+            />
+          </div>
         ))}
       </div>
     </>
