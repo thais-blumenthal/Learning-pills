@@ -16,7 +16,9 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await getProject(Number(id));
+  const numericId = Number(id);
+  if (!Number.isInteger(numericId) || numericId < 1) notFound();
+  const project = await getProject(numericId);
   if (!project) notFound();
 
   return (
