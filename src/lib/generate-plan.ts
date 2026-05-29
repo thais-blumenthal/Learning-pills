@@ -52,6 +52,10 @@ When you are done, respond with ONLY minified JSON (no prose, no markdown fences
     break;
   }
 
+  if (!finalText) {
+    throw new Error("Plan generation did not complete (web search loop exhausted)");
+  }
+
   const cleaned = finalText.replace(/```json|```/g, "").trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
