@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "./index";
-import { projects, sources } from "./schema";
+import { projects, sources, concepts } from "./schema";
 import { normalizeUrls } from "@/lib/urls";
 
 export type Cadence = "morning" | "twice" | "weekdays";
@@ -36,6 +36,7 @@ export async function listProjects() {
 }
 
 export async function deleteProject(id: number) {
+  await db.delete(concepts).where(eq(concepts.projectId, id));
   await db.delete(sources).where(eq(sources.projectId, id));
   await db.delete(projects).where(eq(projects.id, id));
 }

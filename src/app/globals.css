@@ -302,3 +302,82 @@ body {
 .materials-list a { color: var(--accent); }
 
 .narrow { max-width: 600px; }
+
+/* research overlay (Slice 3) */
+.research-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(42, 27, 70, 0.5);
+  backdrop-filter: blur(3px);
+}
+.research-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border-radius: 22px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: var(--glow);
+}
+.research-orb {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: var(--grad);
+  animation: research-pulse 1.4s ease-in-out infinite;
+}
+@keyframes research-pulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.7; }
+  50% { transform: scale(1); opacity: 1; }
+}
+.research-title {
+  font-family: var(--font-fredoka), sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+.research-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  display: inline-block;
+  color: var(--text-dim);
+}
+.research-steps li { margin: 6px 0; }
+@media (prefers-reduced-motion: reduce) {
+  .research-orb { animation: none; }
+}
+
+/* learning plan concept list (Slice 3) */
+.concept-list { list-style: none; margin: 0; padding: 0; }
+.concept-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-solid);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.concept-num {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--grad);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.concept-title { font-family: var(--font-fredoka), sans-serif; font-weight: 600; margin: 0; }
+.concept-hook { color: var(--text-dim); font-size: 13.5px; margin: 2px 0 0; }
+.concept-minutes { margin-left: auto; color: var(--text-dim); font-size: 13px; flex: none; }

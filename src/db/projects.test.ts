@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "./index";
-import { projects, sources } from "./schema";
+import { projects, sources, concepts } from "./schema";
 import { createProject, deleteProject, getProject, listProjects } from "./projects";
 
 const createdIds: number[] = [];
@@ -66,4 +66,22 @@ test("deleteProject removes the project and its sources", async () => {
     .from(sources)
     .where(eq(sources.projectId, project.id));
   expect(remainingSources).toEqual([]);
+});
+
+test("deleteProject removes a project that has concepts (no FK violation)", async () => {
+  const project = await createProject({
+    name: "Has Concepts",
+    urls: ["https://a.com"],
+    cadence: "morning",
+  });
+  await db.insert(concepts).values({
+    projectId: project.id,
+    position: 0,
+    title: "C1",
+    hook: "h",
+    minutes: 2,
+  });
+
+  await deleteProject(project.id); // must not throw
+  expect(await getProject(project.id)).toBeNull();
 });

@@ -26,6 +26,9 @@ export const projects = pgTable("projects", {
   name: text("name").notNull(),
   goal: text("goal"),
   cadence: text("cadence").default("morning").notNull(), // 'morning' | 'twice' | 'weekdays'
+  status: text("status").default("draft").notNull(), // draft | researching | review | learning
+  emoji: text("emoji"),
+  blurb: text("blurb"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -35,5 +38,17 @@ export const sources = pgTable("sources", {
     .references(() => projects.id)
     .notNull(),
   url: text("url").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const concepts = pgTable("concepts", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id")
+    .references(() => projects.id)
+    .notNull(),
+  position: integer("position").notNull(),
+  title: text("title").notNull(),
+  hook: text("hook").notNull(),
+  minutes: integer("minutes").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
