@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProject } from "@/db/projects";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,10 @@ export default async function ProjectDetailPage({
       <button className="btn-gradient" disabled style={{ marginTop: 24 }}>
         Generate learning plan →
       </button>
+
+      <div className="detail-danger">
+        <DeleteProjectButton projectId={project.id} projectName={project.name} />
+      </div>
     </div>
   );
 }
