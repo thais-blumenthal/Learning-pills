@@ -157,6 +157,57 @@ body {
   border-top: 1px solid var(--border-solid);
 }
 
+/* in-app confirmation modal (portaled to <body>) */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(42, 27, 70, 0.45);
+  backdrop-filter: blur(2px);
+}
+.modal-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: var(--glow);
+}
+.modal-title {
+  font-family: var(--font-fredoka), sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 8px;
+}
+.modal-text { color: var(--text-dim); margin: 0 0 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.btn-ghost {
+  border: 1px solid var(--border-solid);
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-danger-solid {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: #d8553f;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-ghost:disabled,
+.btn-danger-solid:disabled { opacity: 0.5; cursor: default; }
+
 .new-card {
   border: 2px dashed var(--border-solid);
   align-items: flex-start;
