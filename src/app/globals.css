@@ -60,10 +60,16 @@ body {
   font-weight: 700;
   font-size: 34px;
   margin: 0 0 6px;
-  background: var(--grad-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .gradient-title {
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .subtitle { color: var(--text-dim); margin: 0 0 28px; }
@@ -133,7 +139,11 @@ body {
   background: var(--surface);
   color: var(--text);
 }
-.input:focus, .textarea:focus { outline: none; border-color: var(--accent); }
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
 .input-lg { font-size: 20px; }
 .textarea { min-height: 90px; resize: vertical; }
 
