@@ -20,3 +20,20 @@ export const chunks = pgTable("chunks", {
   nextReviewAt: timestamp("next_review_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const projects = pgTable("projects", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  goal: text("goal"),
+  cadence: text("cadence").default("morning").notNull(), // 'morning' | 'twice' | 'weekdays'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const sources = pgTable("sources", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id")
+    .references(() => projects.id)
+    .notNull(),
+  url: text("url").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
