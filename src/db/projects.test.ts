@@ -1,0 +1,51 @@
+import { afterEach, expect, test } from "vitest";
+import { eq } from "drizzle-orm";
+import { db } from "./index";
+import { projects, sources } from "./schema";
+import { createProject, getProject, listProjects } from "./projects";
+
+const createdIds: number[] = [];
+
+afterEach(async () => {
+  for (const id of createdIds) {
+    await db.delete(sources).where(eq(sources.projectId, id));
+    await db.delete(projects).where(eq(projects.id, id));
+  }
+  createdIds.length = 0;
+});
+
+test("createProject trims the name, normalizes URLs, and stores everything", async () => {
+  const project = await createProject({
+    name: "  Test Hermes  ",
+    goal: "  learn it  ",
+    urls: ["https://a.com", "https://a.com", " ", "not-a-url", "http://b.com"],
+    cadence: "morning",
+  });
+  createdIds.push(project.id);
+
+  expect(project.name).toBe("Test Hermes");
+
+  const fetched = await getProject(project.id);
+  expect(fetched).not.toBeNull();
+  expect(fetched!.goal).toBe("learn it");
+  expect(fetched!.cadence).toBe("morning");
+  expect(fetched!.sources.map((s) => s.url)).toEqual(["https://a.com", "http://b.com"]);
+});
+
+test("listProjects returns a created project", async () => {
+  const project = await createProject({
+    name: "Listed Project",
+    urls: [],
+    cadence: "weekdays",
+  });
+  createdIds.push(project.id);
+
+  const all = await listProjects();
+  expect(all.some((p) => p.id === project.id)).toBe(true);
+});
+
+test("createProject rejects an empty name", async () => {
+  await expect(
+    createProject({ name: "   ", urls: [], cadence: "morning" }),
+  ).rejects.toThrow(/name/i);
+});
