@@ -39,7 +39,23 @@ export function CreateProjectForm() {
     event.preventDefault();
     if (!name.trim()) return;
     setSubmitting(true);
-    await createProjectAction({ name, goal, urls, cadence });
+    try {
+      await createProjectAction({ name, goal, urls, cadence });
+    } catch (err) {
+      // redirect() throws a NEXT_REDIRECT error (identified by its `digest`);
+      // re-throw it so Next.js performs the navigation.
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "digest" in err &&
+        typeof (err as { digest?: unknown }).digest === "string" &&
+        ((err as { digest: string }).digest.startsWith("NEXT_REDIRECT"))
+      ) {
+        throw err;
+      }
+      setError("Something went wrong saving your project. Please try again.");
+      setSubmitting(false);
+    }
   }
 
   return (
