@@ -71,9 +71,9 @@ export default async function ProjectDetailPage({
         <>
           <h3>Learning plan</h3>
           <ol className="concept-list">
-            {keptConcepts.map((c) => (
+            {keptConcepts.map((c, i) => (
               <li key={c.id} className="concept-row">
-                <span className="concept-num">{c.position + 1}</span>
+                <span className="concept-num">{i + 1}</span>
                 <div>
                   <p className="concept-title">{c.title}</p>
                   <p className="concept-hook">{c.hook}</p>

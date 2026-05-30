@@ -1,4 +1,4 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "./index";
 import { projects, concepts } from "./schema";
 import type { Plan } from "@/lib/plan";
@@ -36,7 +36,7 @@ export async function approvePlan(projectId: number, keptIds: number[]): Promise
     await db
       .update(concepts)
       .set({ included: true })
-      .where(inArray(concepts.id, keptIds));
+      .where(and(eq(concepts.projectId, projectId), inArray(concepts.id, keptIds)));
   }
   await db
     .update(projects)
