@@ -381,3 +381,60 @@ body {
 .concept-title { font-family: var(--font-fredoka), sans-serif; font-weight: 600; margin: 0; }
 .concept-hook { color: var(--text-dim); font-size: 13.5px; margin: 2px 0 0; }
 .concept-minutes { margin-left: auto; color: var(--text-dim); font-size: 13px; flex: none; }
+
+/* plan review — toggles + sticky footer (Slice 4) */
+.concept-dropped { opacity: 0.5; }
+
+.toggle {
+  flex: none;
+  width: 46px;
+  height: 27px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s ease;
+}
+.toggle-on { background: var(--grad); justify-content: flex-end; }
+.toggle-off { background: var(--track); justify-content: flex-start; }
+.toggle-knob {
+  width: 23px;
+  height: 23px;
+  margin: 0 2px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-dim);
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+}
+.toggle-on .toggle-knob { color: var(--accent); }
+
+.review-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-solid);
+}
+.review-summary { color: var(--text-dim); font-size: 13.5px; }
+
+/* user goal, distinct from the AI blurb (Slice 4) */
+.goal-note {
+  margin: 0 0 28px;
+  font-size: 13.5px;
+  color: var(--text-dim);
+}
+.goal-note strong {
+  color: var(--text);
+  font-family: var(--font-fredoka), sans-serif;
+}
