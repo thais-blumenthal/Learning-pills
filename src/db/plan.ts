@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { db } from "./index";
 import { projects, concepts } from "./schema";
 import type { Plan } from "@/lib/plan";
@@ -23,6 +23,24 @@ export async function savePlan(projectId: number, plan: Plan): Promise<void> {
   await db
     .update(projects)
     .set({ status: "review", emoji: plan.emoji, blurb: plan.blurb })
+    .where(eq(projects.id, projectId));
+}
+
+export async function approvePlan(projectId: number, keptIds: number[]): Promise<void> {
+  // included flags first, status flip last (safe ordering — no transaction).
+  await db
+    .update(concepts)
+    .set({ included: false })
+    .where(eq(concepts.projectId, projectId));
+  if (keptIds.length > 0) {
+    await db
+      .update(concepts)
+      .set({ included: true })
+      .where(inArray(concepts.id, keptIds));
+  }
+  await db
+    .update(projects)
+    .set({ status: "learning" })
     .where(eq(projects.id, projectId));
 }
 
