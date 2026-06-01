@@ -46,6 +46,10 @@ export function ReferenceMaterials({
       setError("That doesn't look like a valid URL (must start with http:// or https://).");
       return;
     }
+    if (sources.some((s) => s.url === value)) {
+      setError("That URL is already in your materials.");
+      return;
+    }
     setError("");
     setResearching(true);
     try {

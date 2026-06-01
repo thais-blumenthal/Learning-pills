@@ -61,13 +61,13 @@ export async function addSource(projectId: number, url: string) {
     .select()
     .from(sources)
     .where(and(eq(sources.projectId, projectId), eq(sources.url, trimmed)));
-  if (existing.length > 0) return existing[0];
+  if (existing.length > 0) return { row: existing[0], inserted: false };
 
   const [row] = await db
     .insert(sources)
     .values({ projectId, url: trimmed })
     .returning();
-  return row;
+  return { row, inserted: true };
 }
 
 export async function removeSource(sourceId: number, projectId: number): Promise<void> {

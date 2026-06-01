@@ -118,6 +118,17 @@ test("addSource does not duplicate a URL already on the project", async () => {
   expect(matches).toHaveLength(1);
 });
 
+test("addSource returns inserted=true for a new URL and inserted=false for a duplicate", async () => {
+  const project = await createProject({ name: "Flag Src", urls: [], cadence: "morning" });
+  createdIds.push(project.id);
+
+  const first = await addSource(project.id, "https://flag.com");
+  expect(first.inserted).toBe(true);
+
+  const second = await addSource(project.id, "https://flag.com");
+  expect(second.inserted).toBe(false);
+});
+
 test("removeSource deletes only the given source, scoped to its project", async () => {
   const a = await createProject({
     name: "Owner",
