@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { projects, sources, concepts } from "./schema";
-import { createProject, deleteProject, getProject, listProjects } from "./projects";
+import { createProject, deleteProject, getProject, listProjects, addSource, removeSource } from "./projects";
 
 const createdIds: number[] = [];
 
@@ -84,4 +84,64 @@ test("deleteProject removes a project that has concepts (no FK violation)", asyn
 
   await deleteProject(project.id); // must not throw
   expect(await getProject(project.id)).toBeNull();
+});
+
+test("addSource inserts a valid URL onto a project", async () => {
+  const project = await createProject({ name: "Add Src", urls: [], cadence: "morning" });
+  createdIds.push(project.id);
+
+  await addSource(project.id, "https://added.com");
+
+  const fetched = await getProject(project.id);
+  expect(fetched!.sources.map((s) => s.url)).toContain("https://added.com");
+});
+
+test("addSource rejects an invalid URL", async () => {
+  const project = await createProject({ name: "Bad Src", urls: [], cadence: "morning" });
+  createdIds.push(project.id);
+
+  await expect(addSource(project.id, "not-a-url")).rejects.toThrow();
+});
+
+test("addSource does not duplicate a URL already on the project", async () => {
+  const project = await createProject({
+    name: "Dup Src",
+    urls: ["https://dup.com"],
+    cadence: "morning",
+  });
+  createdIds.push(project.id);
+
+  await addSource(project.id, "https://dup.com");
+
+  const fetched = await getProject(project.id);
+  const matches = fetched!.sources.filter((s) => s.url === "https://dup.com");
+  expect(matches).toHaveLength(1);
+});
+
+test("removeSource deletes only the given source, scoped to its project", async () => {
+  const a = await createProject({
+    name: "Owner",
+    urls: ["https://keep.com", "https://drop.com"],
+    cadence: "morning",
+  });
+  createdIds.push(a.id);
+  const other = await createProject({
+    name: "Other",
+    urls: ["https://other.com"],
+    cadence: "morning",
+  });
+  createdIds.push(other.id);
+
+  const aFull = await getProject(a.id);
+  const dropId = aFull!.sources.find((s) => s.url === "https://drop.com")!.id;
+  const otherSrcId = (await getProject(other.id))!.sources[0].id;
+
+  // wrong project scope: removing other's source via project a's id must NOT delete it
+  await removeSource(otherSrcId, a.id);
+  expect((await getProject(other.id))!.sources).toHaveLength(1);
+
+  // correct scope: removes drop.com, keeps keep.com
+  await removeSource(dropId, a.id);
+  const after = await getProject(a.id);
+  expect(after!.sources.map((s) => s.url)).toEqual(["https://keep.com"]);
 });

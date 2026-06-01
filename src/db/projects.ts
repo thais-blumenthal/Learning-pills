@@ -1,7 +1,7 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "./index";
 import { projects, sources, concepts } from "./schema";
-import { normalizeUrls } from "@/lib/urls";
+import { normalizeUrls, isValidHttpUrl } from "@/lib/urls";
 
 export type Cadence = "morning" | "twice" | "weekdays";
 
@@ -50,4 +50,28 @@ export async function getProject(id: number) {
     .where(eq(sources.projectId, id))
     .orderBy(sources.id);
   return { ...project, sources: projectSources };
+}
+
+export async function addSource(projectId: number, url: string) {
+  const trimmed = url.trim();
+  if (!isValidHttpUrl(trimmed)) {
+    throw new Error("Invalid URL");
+  }
+  const existing = await db
+    .select()
+    .from(sources)
+    .where(and(eq(sources.projectId, projectId), eq(sources.url, trimmed)));
+  if (existing.length > 0) return existing[0];
+
+  const [row] = await db
+    .insert(sources)
+    .values({ projectId, url: trimmed })
+    .returning();
+  return row;
+}
+
+export async function removeSource(sourceId: number, projectId: number): Promise<void> {
+  await db
+    .delete(sources)
+    .where(and(eq(sources.id, sourceId), eq(sources.projectId, projectId)));
 }
