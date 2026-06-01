@@ -5,6 +5,7 @@ import { getPlan } from "@/db/plan";
 import { GeneratePlanButton } from "./GeneratePlanButton";
 import { DeleteProjectButton } from "../DeleteProjectButton";
 import { PlanReview } from "./PlanReview";
+import { ReferenceMaterials } from "./ReferenceMaterials";
 import { reopenPlanAction, resetToDraftAction } from "./review-actions";
 
 export const dynamic = "force-dynamic";
@@ -45,20 +46,10 @@ export default async function ProjectDetailPage({
       )}
       <p className="cadence">↗ {CADENCE_LABEL[project.cadence] ?? project.cadence}</p>
 
-      <h3>Reference materials</h3>
-      {project.sources.length > 0 ? (
-        <ul className="materials-list">
-          {project.sources.map((source) => (
-            <li key={source.id}>
-              <a href={source.url} target="_blank" rel="noopener noreferrer">
-                {source.url}
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="subtitle">No URLs added.</p>
-      )}
+      <ReferenceMaterials
+        projectId={numericId}
+        sources={project.sources.map((s) => ({ id: s.id, url: s.url }))}
+      />
 
       {project.status === "review" ? (
         <>
