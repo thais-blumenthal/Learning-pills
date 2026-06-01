@@ -20,7 +20,7 @@ export async function generatePlan(input: GeneratePlanInput): Promise<Plan> {
 Topic: "${input.name}"
 ${input.goal ? `Learner's goal: ${input.goal}` : ""}
 
-Use the provided source material first. If it is thin or missing, use the web_search tool to research the topic, then build the plan. Break the topic into 5-${MAX_CONCEPTS} bite-sized concepts, ordered easiest-first.
+Use the provided source material first. If it is thin or missing, use the web_search tool to research the topic, then build the plan. Break the topic into 5-${MAX_CONCEPTS} bite-sized concepts, ordered easiest-first.${input.goal ? ` Prioritize and frame the concepts to serve the learner's goal above — choose what to include, and word each title and hook, so the plan moves them toward that goal rather than covering the topic generically.` : ""}
 
 ${materials ? `SOURCE MATERIAL:\n${materials}` : "No source material was readable — research the topic with web_search before planning."}
 

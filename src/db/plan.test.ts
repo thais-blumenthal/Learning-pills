@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { projects, concepts } from "./schema";
 import { createProject } from "./projects";
-import { savePlan, getPlan, setProjectStatus } from "./plan";
+import { savePlan, getPlan, setProjectStatus, approvePlan } from "./plan";
 
 const createdIds: number[] = [];
 
@@ -55,4 +55,50 @@ test("setProjectStatus updates status", async () => {
   await setProjectStatus(id, "researching");
   const [project] = await db.select().from(projects).where(eq(projects.id, id));
   expect(project.status).toBe("researching");
+});
+
+test("approvePlan keeps only the given ids and flips status to learning", async () => {
+  const id = await newProject();
+  await savePlan(id, {
+    emoji: "🤖",
+    blurb: "b",
+    concepts: [
+      { title: "A", hook: "h", minutes: 2 },
+      { title: "B", hook: "h", minutes: 2 },
+      { title: "C", hook: "h", minutes: 2 },
+    ],
+  });
+  const before = await getPlan(id);
+  const keptIds = [before[0].id, before[2].id]; // keep A and C, drop B
+
+  await approvePlan(id, keptIds);
+
+  const after = await getPlan(id);
+  const includedById = new Map(after.map((c) => [c.id, c.included]));
+  expect(includedById.get(before[0].id)).toBe(true);
+  expect(includedById.get(before[1].id)).toBe(false);
+  expect(includedById.get(before[2].id)).toBe(true);
+
+  const [project] = await db.select().from(projects).where(eq(projects.id, id));
+  expect(project.status).toBe("learning");
+});
+
+test("approvePlan reflects the latest kept set when re-approved", async () => {
+  const id = await newProject();
+  await savePlan(id, {
+    emoji: "a",
+    blurb: "b",
+    concepts: [
+      { title: "A", hook: "h", minutes: 1 },
+      { title: "B", hook: "h", minutes: 1 },
+    ],
+  });
+  const rows = await getPlan(id);
+  await approvePlan(id, [rows[0].id]); // keep only A
+  await approvePlan(id, [rows[1].id]); // change mind: keep only B
+
+  const after = await getPlan(id);
+  const includedById = new Map(after.map((c) => [c.id, c.included]));
+  expect(includedById.get(rows[0].id)).toBe(false);
+  expect(includedById.get(rows[1].id)).toBe(true);
 });

@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const modules = pgTable("modules", {
   id: serial("id").primaryKey(),
@@ -50,5 +50,6 @@ export const concepts = pgTable("concepts", {
   title: text("title").notNull(),
   hook: text("hook").notNull(),
   minutes: integer("minutes").notNull(),
+  included: boolean("included").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
