@@ -438,3 +438,16 @@ body {
   color: var(--text);
   font-family: var(--font-fredoka), sans-serif;
 }
+
+/* removable reference material (Slice 4b) */
+.materials-list li { display: flex; align-items: center; gap: 8px; }
+.material-remove {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+.material-remove:hover { color: #d8553f; }
