@@ -51,5 +51,9 @@ export const concepts = pgTable("concepts", {
   hook: text("hook").notNull(),
   minutes: integer("minutes").notNull(),
   included: boolean("included").default(true).notNull(),
+  blocks: text("blocks"),
+  takeaway: text("takeaway"),
+  completion: text("completion"), // null | 'mastered' | 'shaky'
+  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
