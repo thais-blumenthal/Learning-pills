@@ -65,15 +65,20 @@ export default async function ProjectDetailPage({
             {keptConcepts.map((c, i) => (
               <li key={c.id} className="concept-row">
                 <span className="concept-num">{i + 1}</span>
-                <div>
+                <Link href={`/projects/${numericId}/pills/${c.id}`} className="concept-link">
                   <p className="concept-title">{c.title}</p>
                   <p className="concept-hook">{c.hook}</p>
-                </div>
-                <span className="concept-minutes">{c.minutes}m</span>
+                </Link>
+                <span className="concept-state">
+                  {c.completion === "mastered"
+                    ? "✓ done"
+                    : c.completion === "shaky"
+                      ? "🤔 revisit"
+                      : `${c.minutes}m`}
+                </span>
               </li>
             ))}
           </ol>
-          <p className="subtitle">✨ Pills coming soon — this is where your lessons will live.</p>
           <div className="row" style={{ marginTop: 16 }}>
             <form action={reopenPlanAction.bind(null, numericId)}>
               <button type="submit" className="btn-ghost">Edit plan</button>

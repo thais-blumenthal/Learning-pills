@@ -537,3 +537,8 @@ body {
   font-size: 17px;
 }
 .reader-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+/* learning concept rows as links (Slice 5) */
+.concept-link { text-decoration: none; color: inherit; flex: 1; }
+.concept-link:hover .concept-title { color: var(--accent); }
+.concept-state { flex: none; color: var(--text-dim); font-size: 13px; margin-left: auto; }
