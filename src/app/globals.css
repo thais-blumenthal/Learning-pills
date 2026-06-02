@@ -451,3 +451,89 @@ body {
   padding: 2px 4px;
 }
 .material-remove:hover { color: #d8553f; }
+
+/* focus reader (Slice 5) */
+.reader { max-width: 680px; margin: 0 auto; }
+.reader-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.reader-back {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-dim);
+  font: inherit;
+  font-weight: 600;
+  flex: none;
+}
+.reader-prog {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+.reader-fill { display: block; height: 100%; background: var(--grad); }
+.reader-time { flex: none; color: var(--text-dim); font-size: 13px; }
+.reader-kicker {
+  font-family: var(--font-fredoka), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  margin: 0 0 6px;
+}
+
+.lblock { padding: 18px 0; border-bottom: 1px dashed var(--border-solid); }
+.lblock-callout {
+  background: var(--accent-soft);
+  border-radius: 16px;
+  border-bottom: none;
+  padding: 16px 18px;
+  margin: 6px 0;
+}
+.ktag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-fredoka), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.kt-read { color: #8b3fd6; background: rgba(168, 85, 247, 0.14); }
+.kt-do { color: #198a64; background: rgba(31, 158, 116, 0.16); }
+
+.lp { font-size: 16px; line-height: 1.55; margin: 0 0 8px; }
+.lp-points { margin: 8px 0 0; padding-left: 20px; }
+.lp-points li { font-size: 15px; line-height: 1.5; margin: 4px 0; }
+
+.qc-q { font-weight: 700; margin: 0 0 10px; }
+.qc-opts { display: flex; flex-direction: column; gap: 8px; }
+.qc-opt {
+  text-align: left;
+  border: 1px solid var(--border-solid);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font: inherit;
+  cursor: pointer;
+  color: var(--text);
+}
+.qc-opt.ok { border-color: #1f9e74; background: rgba(31, 158, 116, 0.12); }
+.qc-opt.no { border-color: #d8553f; background: rgba(216, 85, 63, 0.12); }
+
+.reader-takeaway {
+  margin: 22px 0;
+  padding-left: 16px;
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 17px;
+}
+.reader-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
