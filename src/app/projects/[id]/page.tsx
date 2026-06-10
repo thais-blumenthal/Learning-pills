@@ -7,6 +7,9 @@ import { DeleteProjectButton } from "../DeleteProjectButton";
 import { PlanReview } from "./PlanReview";
 import { ReferenceMaterials } from "./ReferenceMaterials";
 import { reopenPlanAction, resetToDraftAction } from "./review-actions";
+import { Hub } from "./Hub";
+import { deriveNodeStates } from "@/lib/hub-nodes";
+import { computeStreak } from "@/lib/streak";
 
 export const dynamic = "force-dynamic";
 
@@ -59,33 +62,39 @@ export default async function ProjectDetailPage({
           <GeneratePlanButton projectId={numericId} label="Regenerate plan ↻" />
         </>
       ) : project.status === "learning" ? (
-        <>
-          <h3>Learning plan</h3>
-          <ol className="concept-list">
-            {keptConcepts.map((c, i) => (
-              <li key={c.id} className="concept-row">
-                <span className="concept-num">{i + 1}</span>
-                <Link href={`/projects/${numericId}/pills/${c.id}`} className="concept-link">
-                  <p className="concept-title">{c.title}</p>
-                  <p className="concept-hook">{c.hook}</p>
-                </Link>
-                <span className="concept-state">
-                  {c.completion === "mastered"
-                    ? "✓ done"
-                    : c.completion === "shaky"
-                      ? "🤔 revisit"
-                      : `${c.minutes}m`}
-                </span>
-              </li>
-            ))}
-          </ol>
-          <div className="row" style={{ marginTop: 16 }}>
-            <form action={reopenPlanAction.bind(null, numericId)}>
-              <button type="submit" className="btn-ghost">Edit plan</button>
-            </form>
-            <GeneratePlanButton projectId={numericId} label="Regenerate plan ↻" />
-          </div>
-        </>
+        (() => {
+          const nodes = deriveNodeStates(keptConcepts);
+          const done = keptConcepts.filter((c) => c.completion != null).length;
+          const streak = computeStreak(
+            keptConcepts
+              .map((c) => c.completedAt)
+              .filter((d): d is Date => d != null),
+            new Date(),
+          );
+          return (
+            <Hub
+              projectId={numericId}
+              name={project.name}
+              emoji={project.emoji}
+              blurb={project.blurb}
+              cadence={project.cadence}
+              nodes={nodes}
+              done={done}
+              total={keptConcepts.length}
+              streak={streak}
+              planActions={
+                <>
+                  <form action={reopenPlanAction.bind(null, numericId)}>
+                    <button type="submit" className="btn-ghost">
+                      Edit plan
+                    </button>
+                  </form>
+                  <GeneratePlanButton projectId={numericId} label="Regenerate plan ↻" />
+                </>
+              }
+            />
+          );
+        })()
       ) : project.status === "researching" ? (
         <>
           <p className="subtitle">Researching… refresh in a moment.</p>
