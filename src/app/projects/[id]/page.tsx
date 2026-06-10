@@ -33,21 +33,28 @@ export default async function ProjectDetailPage({
   const hasPlan = project.status === "review" || project.status === "learning";
   const concepts = hasPlan ? await getPlan(numericId) : [];
   const keptConcepts = concepts.filter((c) => c.included);
+  // On learning projects the Hub renders its own header + delivery card,
+  // so the page-level title/blurb/goal/cadence would duplicate it.
+  const isLearning = project.status === "learning";
 
   return (
     <div className="narrow">
       <Link href="/" className="back-link">‹ All projects</Link>
-      <h1 className="gradient-title">
-        {project.emoji ? `${project.emoji} ` : ""}
-        {project.name}
-      </h1>
-      {project.blurb && <p className="subtitle">{project.blurb}</p>}
-      {project.goal && (
-        <p className="goal-note">
-          <strong>Your goal:</strong> {project.goal}
-        </p>
+      {!isLearning && (
+        <>
+          <h1 className="gradient-title">
+            {project.emoji ? `${project.emoji} ` : ""}
+            {project.name}
+          </h1>
+          {project.blurb && <p className="subtitle">{project.blurb}</p>}
+          {project.goal && (
+            <p className="goal-note">
+              <strong>Your goal:</strong> {project.goal}
+            </p>
+          )}
+          <p className="cadence">↗ {CADENCE_LABEL[project.cadence] ?? project.cadence}</p>
+        </>
       )}
-      <p className="cadence">↗ {CADENCE_LABEL[project.cadence] ?? project.cadence}</p>
 
       <ReferenceMaterials
         projectId={numericId}
