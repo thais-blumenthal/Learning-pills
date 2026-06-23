@@ -25,14 +25,15 @@ describe("buildBlocks", () => {
 
 describe("sendPill", () => {
   it("POSTs to chat.postMessage with the bearer token and channel", async () => {
-    const fetchFn = vi.fn(async () => new Response(JSON.stringify({ ok: true })));
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response(JSON.stringify({ ok: true })));
     await sendPill(msg, "xoxb-token", fetchFn);
 
     expect(fetchFn).toHaveBeenCalledTimes(1);
     const [url, init] = fetchFn.mock.calls[0];
     expect(url).toBe("https://slack.com/api/chat.postMessage");
-    expect(init.headers.Authorization).toBe("Bearer xoxb-token");
-    const body = JSON.parse(init.body);
+    const headers = init?.headers as Record<string, string>;
+    expect(headers.Authorization).toBe("Bearer xoxb-token");
+    const body = JSON.parse(init?.body as string);
     expect(body.channel).toBe("C123");
     expect(Array.isArray(body.blocks)).toBe(true);
   });
