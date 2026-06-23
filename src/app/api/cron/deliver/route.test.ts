@@ -7,7 +7,8 @@ beforeEach(() => {
   process.env.CRON_SECRET = "test-secret";
 });
 afterEach(() => {
-  process.env.CRON_SECRET = ORIGINAL;
+  if (ORIGINAL === undefined) delete process.env.CRON_SECRET;
+  else process.env.CRON_SECRET = ORIGINAL;
 });
 
 const call = (headers: Record<string, string>) =>
