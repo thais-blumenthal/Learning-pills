@@ -55,5 +55,6 @@ export const concepts = pgTable("concepts", {
   takeaway: text("takeaway"),
   completion: text("completion"), // null | 'mastered' | 'shaky'
   completedAt: timestamp("completed_at"),
+  deliveredAt: timestamp("delivered_at"), // null until posted to Slack
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
