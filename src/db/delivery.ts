@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "./index";
 import { projects, concepts } from "./schema";
 import { pickNextDelivery } from "@/lib/delivery";
@@ -11,6 +11,7 @@ export interface DeliverDeps {
   slot: Slot;
   now: Date;
   timeZone: string;
+  projectIds?: number[];
   send: (project: Project, concept: Concept) => Promise<void>;
 }
 
@@ -28,7 +29,11 @@ export async function runDelivery(deps: DeliverDeps): Promise<DeliverSummary> {
   const learning = await db
     .select()
     .from(projects)
-    .where(eq(projects.status, "learning"));
+    .where(
+      deps.projectIds
+        ? and(eq(projects.status, "learning"), inArray(projects.id, deps.projectIds))
+        : eq(projects.status, "learning"),
+    );
 
   for (const project of learning) {
     if (!isProjectEligible(project.cadence, deps.slot, deps.now, deps.timeZone)) continue;

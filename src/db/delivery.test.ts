@@ -40,10 +40,10 @@ async function seedLearningProject() {
 }
 
 test("sends the first pill and stamps deliveredAt", async () => {
-  const { first } = await seedLearningProject();
+  const { projectId, first } = await seedLearningProject();
   const send = vi.fn(async () => {});
 
-  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", send });
+  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send });
 
   expect(send).toHaveBeenCalledTimes(1);
   expect(summary.sent).toBe(1);
@@ -52,23 +52,23 @@ test("sends the first pill and stamps deliveredAt", async () => {
 });
 
 test("is gated on the next run until the first pill is completed", async () => {
-  await seedLearningProject();
+  const { projectId } = await seedLearningProject();
   const send = vi.fn(async () => {});
 
-  await runDelivery({ slot: "morning", now, timeZone: "America/New_York", send }); // sends first
-  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", send }); // gated
+  await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send }); // sends first
+  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send }); // gated
 
   expect(send).toHaveBeenCalledTimes(1); // not called again
-  expect(summary.gated).toBeGreaterThanOrEqual(1); // at least the seeded project is gated
+  expect(summary.gated).toBe(1);
 });
 
 test("sends the second pill once the first is completed", async () => {
-  const { first, second } = await seedLearningProject();
+  const { projectId, first, second } = await seedLearningProject();
   const send = vi.fn(async () => {});
 
-  await runDelivery({ slot: "morning", now, timeZone: "America/New_York", send }); // sends first
+  await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send }); // sends first
   await db.update(concepts).set({ completedAt: now }).where(eq(concepts.id, first.id));
-  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", send });
+  const summary = await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send });
 
   expect(summary.sent).toBe(1);
   const [row] = await db.select().from(concepts).where(eq(concepts.id, second.id));
@@ -76,10 +76,10 @@ test("sends the second pill once the first is completed", async () => {
 });
 
 test("skips a project whose cadence excludes this slot", async () => {
-  await seedLearningProject(); // cadence "morning"
+  const { projectId } = await seedLearningProject(); // cadence "morning"
   const send = vi.fn(async () => {});
 
-  const summary = await runDelivery({ slot: "afternoon", now, timeZone: "America/New_York", send });
+  const summary = await runDelivery({ slot: "afternoon", now, timeZone: "America/New_York", projectIds: [projectId], send });
 
   expect(send).not.toHaveBeenCalled();
   expect(summary.considered).toBe(0);
