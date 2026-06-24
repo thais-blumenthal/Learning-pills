@@ -19,3 +19,11 @@ export function normalizeUrls(raw: string[]): string[] {
   }
   return out;
 }
+
+export function pillPath(projectId: number, conceptId: number): string {
+  return `/projects/${projectId}/pills/${conceptId}`;
+}
+
+export function absoluteUrl(baseUrl: string, path: string): string {
+  return `${baseUrl.replace(/\/$/, "")}${path}`;
+}

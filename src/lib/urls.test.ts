@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidHttpUrl, normalizeUrls } from "./urls";
+import { isValidHttpUrl, normalizeUrls, pillPath, absoluteUrl } from "./urls";
 
 describe("isValidHttpUrl", () => {
   it("accepts http and https", () => {
@@ -24,5 +24,24 @@ describe("normalizeUrls", () => {
       "http://b.com",
     ];
     expect(normalizeUrls(input)).toEqual(["https://a.com", "http://b.com"]);
+  });
+});
+
+describe("pillPath", () => {
+  it("builds the reader path from project and concept ids", () => {
+    expect(pillPath(7, 42)).toBe("/projects/7/pills/42");
+  });
+});
+
+describe("absoluteUrl", () => {
+  it("joins a base url and a path", () => {
+    expect(absoluteUrl("https://app.example.com", "/projects/7/pills/42")).toBe(
+      "https://app.example.com/projects/7/pills/42",
+    );
+  });
+  it("strips a trailing slash on the base url", () => {
+    expect(absoluteUrl("https://app.example.com/", "/x")).toBe(
+      "https://app.example.com/x",
+    );
   });
 });

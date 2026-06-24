@@ -148,8 +148,23 @@ Persistence in the prototype is `localStorage`; replace with a real datastore + 
 - **Resource-added concept:** one call returns a single concept pill in the same shape (`aiExtraPill`).
 - Prototype caps output at 1024 tokens via `window.claude.complete`; in production, generating full **mixed-media** pills (with diagram/video block specs) likely needs either a larger budget or **lazy per-pill generation** (generate the plan = titles+hooks first, then generate each pill's blocks when opened). Author the block list as structured output (`blocks:[{kind, ...}]`).
 
-## Slack Delivery (backend)
-External to these designs. The web app only shows: the delivery cadence (chosen at create + on the hub card) and a "delivered this morning" label in the reader. Production needs a scheduler + Slack bot that, per the cadence, posts the next pill with a deep link (e.g. `/project/:id/pill/:n`) into the web app. "Done" in the app is what advances delivery.
+## Slack Delivery (backend) — implemented in Slice 7
+
+A secured cron route posts the next pill to Slack on each project's cadence. The web app still shows the cadence (chosen at create + on the hub card) and a "delivered this morning" label in the reader; "Done" in the app advances delivery.
+
+**Endpoint:** `GET /api/cron/deliver?slot=morning|afternoon`
+Requires header `Authorization: Bearer $CRON_SECRET`.
+
+**Scheduling:** point any scheduler (Vercel Cron, GitHub Actions, system cron) at the endpoint. Call with `slot=morning` once each morning, and additionally `slot=afternoon` for twice-daily projects. The route filters projects by cadence + `APP_TZ` weekend rules; gating (never more than one open pill per project) makes repeat calls safe (idempotent). `weekdays` cadence is skipped on Sat/Sun.
+
+**Drip rule:** on each call, per learning project, the next undelivered included concept (by position) is posted — unless the previously delivered pill is not yet completed, in which case nothing is sent (no pile-up, no nudge).
+
+**Env vars:**
+- `SLACK_BOT_TOKEN` — bot token used for `chat.postMessage`
+- `SLACK_CHANNEL_ID` — recipient channel (single recipient for now)
+- `CRON_SECRET` — shared secret guarding the route
+- `APP_URL` — base URL for absolute deep links (`/projects/{id}/pills/{conceptId}`)
+- `APP_TZ` — timezone for cadence weekend/slot logic (defaults to `UTC`)
 
 ---
 
