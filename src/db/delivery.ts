@@ -18,13 +18,14 @@ export interface DeliverDeps {
 export interface DeliverSummary {
   considered: number;
   sent: number;
+  nudged: number;
   gated: number;
   done: number;
   errors: number;
 }
 
 export async function runDelivery(deps: DeliverDeps): Promise<DeliverSummary> {
-  const summary: DeliverSummary = { considered: 0, sent: 0, gated: 0, done: 0, errors: 0 };
+  const summary: DeliverSummary = { considered: 0, sent: 0, nudged: 0, gated: 0, done: 0, errors: 0 };
 
   const learning = await db
     .select()
@@ -45,7 +46,7 @@ export async function runDelivery(deps: DeliverDeps): Promise<DeliverSummary> {
       .where(eq(concepts.projectId, project.id))
       .orderBy(asc(concepts.position));
 
-    const decision = pickNextDelivery(rows);
+    const decision = pickNextDelivery(rows, deps.now, deps.timeZone);
     if (decision.kind === "gated") {
       summary.gated++;
       continue;
@@ -58,8 +59,11 @@ export async function runDelivery(deps: DeliverDeps): Promise<DeliverSummary> {
     const concept = rows.find((c) => c.id === decision.conceptId)!;
     try {
       await deps.send(project, concept);
+      // Re-stamp deliveredAt on every (re)send: advances the once-per-day nudge
+      // window and keeps the route idempotent within a single day.
       await db.update(concepts).set({ deliveredAt: deps.now }).where(eq(concepts.id, concept.id));
-      summary.sent++;
+      if (decision.kind === "resend") summary.nudged++;
+      else summary.sent++;
     } catch {
       summary.errors++;
     }

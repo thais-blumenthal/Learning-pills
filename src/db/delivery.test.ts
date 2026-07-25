@@ -62,6 +62,21 @@ test("is gated on the next run until the first pill is completed", async () => {
   expect(summary.gated).toBe(1);
 });
 
+test("re-sends (nudges) the same pill the next day when still not completed", async () => {
+  const { projectId, first } = await seedLearningProject();
+  const send = vi.fn(async () => {});
+  const nextDay = new Date(2026, 5, 25, 9, 0, 0); // Thu 2026-06-25
+
+  await runDelivery({ slot: "morning", now, timeZone: "America/New_York", projectIds: [projectId], send }); // sends first
+  const summary = await runDelivery({ slot: "morning", now: nextDay, timeZone: "America/New_York", projectIds: [projectId], send }); // nudge
+
+  expect(send).toHaveBeenCalledTimes(2); // same pill re-sent
+  expect(summary.nudged).toBe(1);
+  expect(summary.sent).toBe(0);
+  const [row] = await db.select().from(concepts).where(eq(concepts.id, first.id));
+  expect(row.deliveredAt).not.toBeNull();
+});
+
 test("sends the second pill once the first is completed", async () => {
   const { projectId, first, second } = await seedLearningProject();
   const send = vi.fn(async () => {});
